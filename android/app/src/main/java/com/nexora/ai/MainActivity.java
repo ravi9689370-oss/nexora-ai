@@ -1,4 +1,4 @@
-package com.creatorstudio.app;
+package com.nexora.ai;
 
 import com.getcapacitor.BridgeActivity;
 
