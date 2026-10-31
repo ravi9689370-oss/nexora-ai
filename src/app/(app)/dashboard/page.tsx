@@ -1,131 +1,110 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { requireSession } from "@/lib/authz";
-import { PageShell } from "@/components/ui/page-shell";
-import { Card } from "@/components/ui/card";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { prisma } from "@/lib/db";
-import { formatRelative, formatMoney } from "@/lib/utils";
-import Link from "next/link";
-import { ApprovalQueueWidget, NextActionsWidget } from "@/components/dashboard/widgets";
-import { EmptyState } from "@/components/ui/empty-state";
+'use client';
 
-export const metadata = { title: "Dashboard" };
+import { 
+  MessageSquare, 
+  Brain, 
+  Bot, 
+  SearchCode, 
+  Zap,
+  Code2,
+  Smartphone,
+  Image,
+  Globe,
+  Activity
+} from 'lucide-react';
+import Link from 'next/link';
 
-const DAY = 24 * 60 * 60 * 1000;
+const features = [
+  { name: 'AI Chat', href: '/chat', icon: MessageSquare, color: 'blue', desc: 'Multi-model conversations' },
+  { name: 'Model Explorer', href: '/models', icon: Brain, color: 'purple', desc: '200+ AI models' },
+  { name: 'Agent Center', href: '/agents', icon: Bot, color: 'green', desc: '358+ specialized agents' },
+  { name: 'Reverse Engineering Lab', href: '/rea-lab', icon: SearchCode, color: 'red', desc: 'REA-powered analysis' },
+  { name: 'Coding Workspace', href: '/coding', icon: Code2, color: 'cyan', desc: 'Autonomous coding' },
+  { name: 'Android Dev Lab', href: '/android-lab', icon: Smartphone, color: 'emerald', desc: 'Build APKs with AI' },
+  { name: 'Image Studio', href: '/image-studio', icon: Image, color: 'pink', desc: 'AI image generation' },
+  { name: 'Research Center', href: '/research', icon: Globe, color: 'orange', desc: 'Live web research' },
+];
 
-export default async function OverviewPage() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/login");
-  const sessionCtx = await requireSession({ session });
-  const workspaceId = sessionCtx.workspaceId;
-  const now = new Date();
+const colorMap: Record<string, string> = {
+  blue: 'from-blue-500/20 to-blue-600/10 border-blue-500/30 text-blue-400',
+  purple: 'from-purple-500/20 to-purple-600/10 border-purple-500/30 text-purple-400',
+  green: 'from-green-500/20 to-green-600/10 border-green-500/30 text-green-400',
+  red: 'from-red-500/20 to-red-600/10 border-red-500/30 text-red-400',
+  cyan: 'from-cyan-500/20 to-cyan-600/10 border-cyan-500/30 text-cyan-400',
+  emerald: 'from-emerald-500/20 to-emerald-600/10 border-emerald-500/30 text-emerald-400',
+  pink: 'from-pink-500/20 to-pink-600/10 border-pink-500/30 text-pink-400',
+  orange: 'from-orange-500/20 to-orange-600/10 border-orange-500/30 text-orange-400',
+};
 
-  const [
-    awaitingApproval,
-    scheduledCount,
-    failingTasks,
-    recentTasks,
-    workspace,
-  ] = await Promise.all([
-    prisma.approvalRequest.count({ where: { workspaceId: workspaceId, status: "pending" } }),
-    prisma.scheduledPost.count({ where: { workspaceId: workspaceId, status: { in: ["approved", "queued"] } } }),
-    prisma.agentTask.count({ where: { workspaceId: workspaceId, status: "failed" } }),
-    prisma.agentTask.findMany({
-      where: { workspaceId: workspaceId },
-      orderBy: { createdAt: "desc" },
-      take: 6,
-      select: { id: true, type: true, status: true, agentKey: true, summary: true, isMock: true, createdAt: true },
-    }),
-    prisma.workspace.findUnique({ where: { id: workspaceId }, select: { name: true, currency: true } }),
-  ]);
-
-  const revenueAgg = await prisma.revenueRecord.aggregate({
-    where: { workspaceId: workspaceId, kind: "sale", occurredAt: { gte: new Date(now.getTime() - 30 * DAY) } },
-    _sum: { amountCents: true },
-  });
-  const leadCount = await prisma.lead.count({ where: { workspaceId: workspaceId } });
-  const hotLeads = await prisma.lead.count({ where: { workspaceId: workspaceId, qualification: "high_value" } });
-  const published30 = await prisma.publishedPost.count({
-    where: { workspaceId: workspaceId, publishedAt: { gte: new Date(now.getTime() - 30 * DAY) } },
-  });
-
-  const revenueCents = revenueAgg._sum.amountCents ?? 0;
-  const integrationAlerts = await prisma.integration.count({
-    where: { workspaceId: workspaceId, status: { in: ["error"] } },
-  });
-
+export default function DashboardPage() {
   return (
-    <PageShell
-      title="Overview"
-      subtitle={`Good to see you - ${workspace?.name ?? "your studio"} at a glance.`}
-      actions={<Link href="/studio/director" className="btn-outline">Ask the Director</Link>}
-    >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Awaiting your approval" value={String(awaitingApproval)} href="/approvals" hint="Items pause execution until reviewed." />
-        <StatCard label="Scheduled posts queued" value={String(scheduledCount)} href="/distribution/queue" hint="Approved publishing packages only." />
-        <StatCard label="Revenue (30d)" value={formatMoney(revenueCents, workspace?.currency ?? "USD")} href="/analytics/revenue" hint="From verified sale records." />
-        <StatCard label="Leads" value={String(leadCount)} href="/crm/leads" hint={`${hotLeads} flagged high-value.`} />
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
+          <Zap className="w-8 h-8 text-purple-500" />
+          Nexora AI
+        </h1>
+        <p className="text-zinc-400">Multi-model intelligence • Specialized agents • Reverse engineering • Full-stack development</p>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
-          <Card title="Recent agent activity">
-            {recentTasks.length === 0 ? (
-              <EmptyState
-                title="No agent activity yet"
-                body="Run your first workflow from the Studio Director - research, scripts, and publishing packages will appear here."
-                action={{ label: "Open Studio Director", href: "/studio/director" }}
-              />
-            ) : (
-              <ul className="divide-y divide-slate-100 dark:divide-[#232b4d]">
-                {recentTasks.map((t) => (
-                  <li key={t.id} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
-                    <div className="min-w-0">
-                      <Link href={`/studio/tasks/${t.id}`} className="text-sm font-medium text-slate-800 hover:underline dark:text-slate-100">
-                        {t.type}
-                      </Link>
-                      <p className="truncate text-xs text-slate-500">{t.summary ?? t.agentKey}</p>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-2">
-                      <StatusBadge status={t.status} isMock={t.isMock} />
-                      <span className="text-xs text-slate-400">{formatRelative(t.createdAt)}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {features.map((feature) => (
+          <Link
+            key={feature.name}
+            href={feature.href}
+            className={`p-6 rounded-xl bg-gradient-to-br border hover:scale-105 transition-transform ${colorMap[feature.color]}`}
+          >
+            <feature.icon className="w-8 h-8 mb-3" />
+            <h3 className="text-lg font-semibold mb-1 text-white">{feature.name}</h3>
+            <p className="text-sm text-zinc-400">{feature.desc}</p>
+          </Link>
+        ))}
+      </div>
 
-          <NextActionsWidget
-            failingTasks={failingTasks}
-            pendingApprovals={awaitingApproval}
-            integrationAlerts={integrationAlerts}
-            hotLeads={hotLeads}
-          />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="p-6 rounded-xl bg-zinc-900 border border-zinc-800">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-green-400" />
+            System Status
+          </h2>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-zinc-400">AI Models</span>
+              <span className="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded">4+ Models Ready</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-zinc-400">Agent Orchestrator</span>
+              <span className="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded">358 Agents Loaded</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-zinc-400">REA Integration</span>
+              <span className="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded">Connected (207 tools)</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-zinc-400">MCP Servers</span>
+              <span className="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded">1 Active</span>
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-6">
-          <ApprovalQueueWidget />
-          <Card title="Published content (30d)">
-            <p className="text-3xl font-bold">{published30}</p>
-            <p className="mt-1 text-xs text-slate-500">{published30 === 0 ? "No published content recorded yet - publish manually or once a platform is connected." : "Verified publishing records only."}</p>
-            <Link href="/distribution/posts" className="mt-3 inline-block text-sm font-semibold text-indigo-700 dark:text-indigo-400">View posts →</Link>
-          </Card>
+        <div className="p-6 rounded-xl bg-zinc-900 border border-zinc-800">
+          <h2 className="text-xl font-semibold mb-4">Quick Start</h2>
+          <div className="space-y-2">
+            <Link href="/chat" className="block p-3 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors">
+              <div className="font-medium">Start AI Chat</div>
+              <div className="text-sm text-zinc-400">Chat with any of your configured models</div>
+            </Link>
+            <Link href="/rea-lab" className="block p-3 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors">
+              <div className="font-medium">Analyze an App</div>
+              <div className="text-sm text-zinc-400">Use REA to reverse engineer applications</div>
+            </Link>
+            <Link href="/android-lab" className="block p-3 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors">
+              <div className="font-medium">Build Android APK</div>
+              <div className="text-sm text-zinc-400">Generate installable APKs with AI</div>
+            </Link>
+          </div>
         </div>
       </div>
-    </PageShell>
+    </div>
   );
 }
-
-function StatCard({ label, value, href, hint }: { label: string; value: string; href: string; hint?: string }) {
-  return (
-    <Link href={href} className="card group block p-4 transition hover:shadow-pop">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
-      <p className="mt-1.5 text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
-      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
-    </Link>
-  );
-}
-

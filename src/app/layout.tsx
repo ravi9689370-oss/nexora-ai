@@ -1,35 +1,21 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import "./globals.css";
+import { AppLayout } from "@/components/layout/app-layout";
 
 export const metadata: Metadata = {
-  title: {
-    default: "AI Creator Studio",
-    template: "%s · AI Creator Studio",
-  },
-  description:
-    "The One-Person AI Creator Studio - an operating system for running a solo digital media business: planning, production, distribution, sales, and analytics.",
+  title: "Nexora AI",
+  description: "Multi-model AI, Agents, REA Reverse Engineering, and more",
 };
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  themeColor: "#0b1020",
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "try{var t=localStorage.getItem('oc-theme');if(t==='dark'){document.documentElement.classList.add('dark')}else if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}}catch(e){}",
-          }}
-        />
-      </head>
-      <body>
-        <script>0</script>
-        {children}
+    <html lang="en" className="dark">
+      <body className="antialiased bg-black text-white">
+        <AppLayout>{children}</AppLayout>
       </body>
     </html>
   );
