@@ -1,51 +1,38 @@
-name: Build Android APK
+name: Build APK
 
 on:
-  push:
-    branches: [ master, main ]
   workflow_dispatch:
+  push:
+    branches: [ main, master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
-
-      - name: Setup Java JDK
-        uses: actions/setup-java@v4
+          node-version: '20'
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps || npm install
-
-      - name: Build web assets
-        run: npx --yes next build --no-lint 2>&1 | tail -20 || echo "build done"
-
-      - name: Sync Capacitor
+      - uses: android-actions/setup-android@v3
+      - name: Install
+        run: npm install --legacy-peer-deps
+      - name: Build
+        run: npm run build 2>&1 | tail -5 || true
+      - name: Prepare
         run: |
-          npx cap sync android || true
-
-      - name: Build Android APK
+          npm run mobile:build 2>&1 | tail -3 || true
+          npx cap sync android 2>&1 | tail -5 || true
+      - name: Gradle
+        working-directory: ./android
         run: |
-          cd android
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon || ./gradlew assembleDebug --no-daemon
-
-      - name: Upload APK artifact
+          ./gradlew assembleDebug --stacktrace 2>&1 | tail -30
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: Nexora-AI-APK
-          path: |
-            android/app/build/outputs/apk/**/*.apk
-          if-no-files-found: warn
+          name: app-debug
+          path: android/app/build/outputs/apk/debug/*.apk
