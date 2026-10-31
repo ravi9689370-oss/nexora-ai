@@ -11,7 +11,7 @@ export function Logo({ dark = false, compact = false }: { dark?: boolean; compac
       </span>
       {!compact && (
         <span className={`text-[15px] font-bold leading-tight ${dark ? "text-white" : "text-slate-900 dark:text-white"}`}>
-          AI Creator Studio
+          Nexora AI
           <span className={`block text-[10px] font-medium ${dark ? "text-slate-400" : "text-slate-500"}`}>
             The One-Person Media OS
           </span>

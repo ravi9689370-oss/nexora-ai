@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">AI Creator Studio</string>
-    <string name="title_activity_main">AI Creator Studio</string>
-    <string name="package_name">com.creatorstudio.app</string>
-    <string name="custom_url_scheme">com.creatorstudio.app</string>
+    <string name="app_name">Nexora AI</string>
+    <string name="title_activity_main">Nexora AI</string>
+    <string name="package_name">com.nexora.ai</string>
+    <string name="custom_url_scheme">com.nexora.ai</string>
 </resources>

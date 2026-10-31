@@ -50,7 +50,7 @@ function buildShell() {
   const topbar = h("header", { class: "topbar" },
     h("div", { class: "brand" },
       h("span", { class: "mark", html: '<svg viewBox="0 0 108 108" xmlns="http://www.w3.org/2000/svg"><path fill="#FBBF24" d="M44,14 L74,14 L58,45 L73,45 L39,95 L49,58 L34,58 Z"/></svg>' }),
-      "AI Creator Studio"),
+      "Nexora AI"),
     h("div", { class: "spacer" }),
     h("button", {
       class: "icon-btn", title: "Settings", "aria-label": "Settings",

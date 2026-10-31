@@ -30,7 +30,7 @@ export function Sidebar() {
           </span>
           {!collapsed && (
             <span className="truncate text-sm font-bold leading-tight text-slate-900 dark:text-white">
-              AI Creator Studio
+              Nexora AI
               <span className="block text-[10px] font-medium text-slate-500">One-Person Media OS</span>
             </span>
           )}

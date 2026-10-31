@@ -133,7 +133,7 @@ export async function render() {
     if (!file) { toast("Choose a backup file first", "warn"); return; }
     try {
       const parsed = JSON.parse(await file.text());
-      if (parsed.app !== "ai-creator-studio" || !parsed.data) throw new Error("Not an AI Creator Studio backup file.");
+      if (parsed.app !== "ai-creator-studio" || !parsed.data) throw new Error("Not an Nexora AI backup file.");
       const ok = await confirmModal({
         title: "Import & replace local data?",
         body: `Backup from ${parsed.exportedAt || "unknown date"} replaces everything currently on this device. Export first if unsure.`,
@@ -170,7 +170,7 @@ export async function render() {
   /* ---------------- about ---------------- */
   const about = card("About", null,
     h("div", { class: "small muted" },
-      "AI Creator Studio — offline-first mobile workspace. ", "v", String(SEED_VERSION), " · local store v", String(SEED_VERSION)),
+      "Nexora AI — offline-first mobile workspace. ", "v", String(SEED_VERSION), " · local store v", String(SEED_VERSION)),
     h("div", { class: "small muted", style: "margin-top:6px" },
       "All data lives on this device (IndexedDB, with a localStorage fallback). Maya runs as an offline assistant on-device. Publishing exports packages you paste into each platform — the app never fakes a post, payment, or AI provider."));
 

@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "AI Creator Studio",
+  title: "Nexora AI",
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {

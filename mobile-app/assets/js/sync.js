@@ -47,7 +47,7 @@ export async function ping(serverUrl) {
     const res = await fetch(`${base}/api/auth/csrf`, { signal, headers: { accept: "application/json" } });
     if (!res.ok) return { ok: false, reason: `Server responded HTTP ${res.status}.` };
     const data = await res.json().catch(() => null);
-    if (!data || !data.csrfToken) return { ok: false, reason: "Reachable, but this doesn't look like an AI Creator Studio server (no csrf token)." };
+    if (!data || !data.csrfToken) return { ok: false, reason: "Reachable, but this doesn't look like an Nexora AI server (no csrf token)." };
     return { ok: true, serverUrl: base };
   } catch (e) {
     return { ok: false, reason: friendlyError(e, base) };

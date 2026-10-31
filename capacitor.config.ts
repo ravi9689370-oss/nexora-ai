@@ -20,8 +20,8 @@ import type { CapacitorConfig } from "@capacitor/cli";
  * dev-server URL for sync testing; production sync targets are https.
  */
 const config: CapacitorConfig = {
-  appId: "com.creatorstudio.app",
-  appName: "AI Creator Studio",
+  appId: "com.nexora.ai",
+  appName: "Nexora AI",
   webDir: "www", // built from mobile-app/ by `npm run mobile:build`
   android: {
     allowMixedContent: true,

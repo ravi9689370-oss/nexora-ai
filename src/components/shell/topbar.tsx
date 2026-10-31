@@ -207,7 +207,7 @@ function MobileDrawer({ onClose }: { onClose: () => void }) {
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} aria-hidden />
       <div className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white shadow-2xl dark:bg-[#0d1330]">
         <div className="flex h-16 items-center justify-between border-b border-slate-200 px-4 dark:border-[#232b4d]">
-          <span className="text-sm font-bold text-slate-900 dark:text-white">AI Creator Studio</span>
+          <span className="text-sm font-bold text-slate-900 dark:text-white">Nexora AI</span>
           <button type="button" onClick={onClose} aria-label="Close navigation" className="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-[#1a2148]">
             <X size={18} />
           </button>
