@@ -29,7 +29,7 @@ function pick(list, n) {
   return out;
 }
 
-function hooks(topicTitle) {
+export function hooks(topicTitle) {
   const t = topicTitle || "your topic";
   return [
     `I tried ${t.toLowerCase()} for 30 days. Here's what nobody tells you.`,
@@ -40,7 +40,7 @@ function hooks(topicTitle) {
   ];
 }
 
-function outline(title) {
+export function outline(title) {
   return `OUTLINE — "${title || "Untitled"}" (60s vertical)
 
 1. HOOK (0:00–0:05)
@@ -55,12 +55,12 @@ function outline(title) {
    One ask only: follow, comment keyword, or next video.`;
 }
 
-function scriptDraft(topic, platform) {
+export function scriptDraft(topic, platform) {
   const t = topic || "your topic";
   return `TITLE: ${t}\nPLATFORM: ${platform || "youtube"}\n\nHOOK (0:00-0:08)\n${hooks(t)[0]}\n\nCONTEXT (0:08-0:30)\nSet the stakes: what the viewer gets in the next minute.\n\nMAIN POINT (0:30-1:40)\nOne idea, demonstrated step by step. Show the screen, the result, the mistake to avoid.\n\nPROOF (1:40-2:00)\nConcrete before/after with numbers.\n\nCTA (2:00-2:15)\nSingle ask. Comment keyword + follow for part 2.`;
 }
 
-function caption(platform, topic) {
+export function caption(platform, topic) {
   const t = (topic || "my new post").replace(/\.$/, "");
   const tags = (PLATFORM_TAGS[platform] || PLATFORM_TAGS.instagram).join(" ");
   if (platform === "linkedin") return `${t} — here's the honest breakdown.\n\nWhat worked:\n• One idea per post\n• Proof over promises\n• A single, clear CTA\n\nWhat I'd do differently: start with the result, not the story.\n\n${tags}`;

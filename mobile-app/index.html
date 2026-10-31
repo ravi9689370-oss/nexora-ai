@@ -24,6 +24,45 @@
     </div>
   </div>
 
-  <script type="module" src="assets/js/main.js"></script>
+  <script>
+    /* ES5-only compatibility layer for old Android WebViews (Chrome < 86). */
+    (function () {
+      if (window.Element && !Element.prototype.replaceChildren) {
+        function rc() {
+          while (this.firstChild) this.removeChild(this.firstChild);
+          for (var i = 0; i < arguments.length; i++) {
+            var n = arguments[i];
+            if (n) this.appendChild(typeof n === "string" ? document.createTextNode(n) : n);
+          }
+        }
+        Element.prototype.replaceChildren = rc;
+        if (window.Document && !Document.prototype.replaceChildren) Document.prototype.replaceChildren = rc;
+        if (window.DocumentFragment && !DocumentFragment.prototype.replaceChildren) DocumentFragment.prototype.replaceChildren = rc;
+      }
+      if (window.crypto && !crypto.randomUUID) {
+        crypto.randomUUID = function () {
+          return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+            var r = (Math.random() * 16) | 0;
+            return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+          });
+        };
+      }
+    })();
+  </script>
+  <!-- Boot watchdog: if the shell never renders, show an actionable error
+       instead of an eternal splash (also works when the bundle parse fails). -->
+  <script>
+    (function () {
+      setTimeout(function () {
+        if (document.getElementById("pageRoot")) return;
+        var note = document.createElement("div");
+        note.setAttribute("style", "margin:14px;padding:14px;border-radius:12px;background:#2e1065;color:#fff;font:14px/1.5 -apple-system,sans-serif");
+        note.innerHTML = "<b>Init failed</b><br>See Settings &rarr; app compatibility, or reinstall. Tip: update <i>Android System WebView</i> from Play Store, then reopen Nexora AI.";
+        var host = document.getElementById("app") || document.body;
+        host.appendChild(note);
+      }, 9000);
+    })();
+  </script>
+  <script src="assets/js/bundle.js" defer></script>
 </body>
 </html>
